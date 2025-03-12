@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { DataService } from './data.service';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -10,20 +11,22 @@ import { Observable } from 'rxjs';
 })
 export class AppComponent implements OnInit {
   title = 'angular-nestjs-api';
+  private dataService = inject(DataService);
   data: any[] = [];
-  
+
   ngOnInit(): void {
     this.fetchData();
   }
 
-  private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/movies'; // aus eigener mysql-DB
-  
   fetchData() {
-    // console.log('passt');
-    this.http.get(this.apiUrl).subscribe((resp: any) => {
-      console.log(resp);
-      this.data = resp;
-    })
+    this.dataService
+      .getData()
+      .pipe(
+        catchError((error) => {
+          console.error('Fehler beim Laden der Daten', error);
+          return of([]); // Gibt ein leeres Array zurück
+        })
+      )
+      .subscribe((response) => (this.data = response));
   }
 }
