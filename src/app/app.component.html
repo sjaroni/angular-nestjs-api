@@ -1,0 +1,14 @@
+<h1>Hallo Movies</h1>
+
+<ul>
+
+  @for (movie of data; track $index) {
+    <li>
+      {{movie.id}}
+      {{movie.director}}
+      {{movie.genre}}
+      {{movie.length}}
+      {{movie.name}}
+    </li>
+  }
+</ul>
